@@ -14,7 +14,8 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      redirect_to @user
+      session[:user_id] = @user.id
+      redirect_to "/users/#{@user.id}"
     else
       flash[:errors] = @user.errors.full_messages
       redirect_to :back
@@ -27,8 +28,8 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
-    @user.update(user_params)
-    redirect_to @user
+    @user.update update_params
+    redirect_to "/users/#{@user.id}"
   end
 
   def destroy
@@ -41,5 +42,8 @@ class UsersController < ApplicationController
   private
     def user_params
       params.require(:user).permit(:name, :email, :password, :password_confirmation)
+    end
+    def update_params
+      params.require(:user).permit(:name, :email)
     end
 end
